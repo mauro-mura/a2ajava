@@ -10,12 +10,11 @@ import com.t4a.processor.OpenAiActionProcessor;
 import com.t4a.processor.scripts.ScriptProcessor;
 import com.t4a.processor.scripts.ScriptResult;
 import com.t4a.processor.scripts.SeleniumScriptProcessor;
-import com.t4a.processor.selenium.SeleniumGeminiProcessor;
-import com.t4a.processor.selenium.SeleniumProcessor;
 import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
 
+import lombok.Getter;
 import lombok.extern.java.Log;
 
 import org.springframework.http.HttpStatus;
@@ -28,6 +27,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,16 +46,17 @@ import java.util.concurrent.Executors;
 public class DyanamicTaskContoller implements A2ATaskController {
     protected final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    @Getter
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
     protected AIProcessor baseProcessor = new GeminiV2ActionProcessor();
 
     protected PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
 
-    protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
+    //protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
 
     protected ScriptProcessor scriptProcessor = new ScriptProcessor();
 
-    protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
+    //protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
 
 
     protected PromptTransformer getPromptTransformer() {
@@ -124,11 +126,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
             tasks.put(taskId, task);
         }
 
-        if (isAsync) {
-            nonBlockingService.execute(() -> processTaskLogic(taskSendParams, task, taskId, actionCallback));
-        } else {
-            processTaskLogic(taskSendParams, task, taskId, actionCallback);
-        }
+        processTaskLogicForSyncndAsync(taskSendParams, actionCallback, isAsync, task, taskId);
 
         SendTaskResponse response = new SendTaskResponse();
         response.setId(taskId);
@@ -136,8 +134,17 @@ public class DyanamicTaskContoller implements A2ATaskController {
         return response;
     }
 
+    protected void processTaskLogicForSyncndAsync(TaskSendParams taskSendParams, ActionCallback actionCallback, boolean isAsync, Task task, String taskId) {
+        if (isAsync) {
+            nonBlockingService.execute(() -> processTaskLogic(taskSendParams, task, taskId, actionCallback));
+        } else {
+            processTaskLogic(taskSendParams, task, taskId, actionCallback);
+        }
+    }
+
 
     protected void processTaskLogic(TaskSendParams taskSendParams, Task task, String taskId, ActionCallback actionCallback) {
+
         try {
             List<Part> parts = taskSendParams.getMessage().getParts();
             if (parts != null && !parts.isEmpty()) {
@@ -150,7 +157,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
                         getBaseProcessor().processSingleAction(text, actionCallback);
                     } else {
                         Object obj = getBaseProcessor().processSingleAction(text);
-                        List<Part> partsList  = task.getStatus().getMessage().getParts();
+                        List<Part> currentParts = task.getStatus().getMessage().getParts();
+                        List<Part> partsList = new ArrayList<>(currentParts != null ? currentParts : new ArrayList<>());
+                        task.getStatus().getMessage().setParts(partsList);
                         TextPart resultPart = new TextPart();
                         partsList.add(resultPart);
                         task.getStatus().setState(TaskState.COMPLETED);
@@ -166,16 +175,21 @@ public class DyanamicTaskContoller implements A2ATaskController {
                 }
             }
         } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
             TaskStatus failedStatus = new TaskStatus(TaskState.FAILED);
             Message errorMessage = new Message();
             errorMessage.setRole("agent");
             TextPart errorPart = new TextPart();
             errorPart.setType("text");
-            errorPart.setText("Processing failed: " + e.getMessage());
+            errorPart.setText("Processing failed: Access Denied");
             errorMessage.setParts(List.of(errorPart));
             failedStatus.setMessage(errorMessage);
             task.setStatus(failedStatus);
-            log.warning("Error processing task: " + e.getMessage());
+
+
+            log.severe("Complete stack trace:\n" + sw.toString());
             tasks.put(taskId, task);
         }
     }
@@ -202,7 +216,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
                 // Write steps to file
                 Files.write(tempFile, originalString.getBytes());
-                ScriptResult result  = seleniumScriptProcessor.process(tempFile.toAbsolutePath().toString());
+                ScriptResult result  = null;//seleniumScriptProcessor.process(tempFile.toAbsolutePath().toString());
                 String resultString = objectMapper.writeValueAsString(result);
                 log.info(resultString);
                 task.setDetailedAndMessage(TaskState.COMPLETED,resultString);
