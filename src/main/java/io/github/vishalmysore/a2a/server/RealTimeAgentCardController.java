@@ -1,13 +1,12 @@
 package io.github.vishalmysore.a2a.server;
 
-import com.t4a.annotations.Agent;
+
 import com.t4a.api.AIAction;
 import com.t4a.api.GenericJavaMethodAction;
 import com.t4a.api.GroupInfo;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.AIProcessingException;
 import com.t4a.transform.GeminiV2PromptTransformer;
-import com.t4a.transform.OpenAIPromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.AgentCard;
 import jakarta.annotation.PostConstruct;
@@ -18,13 +17,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * This controller serves the real-time agent card for the TicketQueen agent.
@@ -53,10 +49,12 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
     }
 
     public RealTimeAgentCardController(ApplicationContext context) {
+
         PredictionLoader.getInstance(context);
         promptTransformer = new GeminiV2PromptTransformer();
     }
     public boolean isMethodAllowed(Method method)    {
+        log.info(method.getName());
         return true;
     }
     @Override
@@ -66,24 +64,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
 
     @PostConstruct
     public void init() {
-        Properties properties = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Unable to find tools4ai.properties");
-            }
-            properties.load(input);
-
-            String provider = properties.getProperty("agent.provider");
-            if ("openai".equals(provider)) {
-                promptTransformer = new OpenAIPromptTransformer();
-            } else if ("gemini".equals(provider)) {
-                promptTransformer = new GeminiV2PromptTransformer();
-            } else {
-                log.info("Provider not found defaulting to Gemini");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading properties file", e);
-        }
+        promptTransformer = PredictionLoader.getInstance().createOrGetPromptTransformer();
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         StringBuilder realTimeDescription = new StringBuilder("This agent provides the following capabilities: ");

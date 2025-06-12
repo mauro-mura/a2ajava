@@ -20,10 +20,10 @@ a2ajava is a Swiss Army knife for building agentic applications. It is multi-pro
 
 ## Quick Start  
 
-Use these example to quickly build agents using this library    
+Use these example to quickly build agents using this library , forking and cloning these examples is the best way to get started with a2ajava. 
 
-* [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents , connect your a2a server to MCP client like claude or connect your MCP server to a2a client. Or vice versa or any permutation and combination  
-* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use a2ajava to build a spring agent using A2A and MCP, can work with a2a client or with mcp client like claude desktop or connect to visual studio code as agent   
+* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use a2ajava to build a spring agent using A2A and MCP, can work with a2a client or with mcp client like claude desktop or connect to visual studio code as agent. This should be the first project to learn if you are new to agentic ai.
+* [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents , connect your a2a server to MCP client like claude or connect your MCP server to a2a client. Or vice versa or any permutation and combination
 * [Database Agent](https://github.com/vishalmysore/SqlAIAgent) - Use a2ajava to build a database agent using Derby DB, start stop database , insert data , create table all with agentic operation for both mcp as well as a2a      
 * [Standalone Java](https://github.com/vishalmysore/a2a-examples) - Several Examples on how to Use a2ajava to build a standalone java agent using A2A and MCP work with any client     
 * [Log Monitoring Agent](https://github.com/vishalmysore/agenticlog) - Use a2ajava to build a log monitoring agent which triggers a2a task based on the log messages. Works with both a2a and mcp clients dual protocol 
@@ -36,6 +36,13 @@ Use these example to quickly build agents using this library
 * [MCP Agent in Kotlin](https://github.com/vishalmysore/mcp-kotlin) - Build MCP Agent in Kotlin and connect to Claude or A2A Clients  
 * [MCP and A2A RAG Server](https://github.com/vishalmysore/mcp-rag-server) - State of the art RAG server using A2A and MCP with MongoDB Atlas works with both MCP as well as A2A clients
 * [A2A and MCP Agent with Security](https://github.com/vishalmysore/a2a-mcp-with-security) - Build A2A and MCP agent with security using Spring Security and JWT. 
+* [A2A and MCP in Groovy](https://github.com/vishalmysore/a2aGroovy) - Build A2A and MCP agent in Groovy using A2AJava library.
+* [A2A and MCP in Scala](https://github.com/vishalmysore/a2aScala) - Build A2A and MCP agent in Scala using A2AJava library.
+* [A2A and MCP with Playwright](https://github.com/vishalmysore/a2aPlaywright) - Build A2A and MCP agent with Playwright for web automation using A2AJava library.
+* [MCP and A2A with Apache Thrift](https://github.com/vishalmysore/mcp-apache-thrift) - Build A2A and MCP agent with Apache Thrift for cross-language communication using A2AJava library. This example demonstrates how to use Thrift to call a service implemented in another language (e.g., Python, Go, C++) from a Java-based A2A or MCP agent.
+* [Single MCP Server and Client](https://github.com/vishalmysore/mcp-server-client)- Build a MCP server and client using A2AJava library. This example demonstrates how to build a MCP server and client using A2AJava library. It also demonstrates how to use the MCP protocol to call tools and tasks from the server.
+* [MCP Multi Server and Client](https://github.com/vishalmysore/mcp-a2a-multi-agent) - Build a MCP server and client with multiple servers using A2AJava library. This example demonstrates how to build a MCP server and client with multiple servers using A2AJava library. It also demonstrates how to use the MCP protocol to call tools and tasks from the server.
+* [Agentic Mesh - 4 Servers](https://github.com/vishalmysore/mcp-agentic-mesh)- Build a Agentic Mesh using A2AJava library. This example demonstrates how to build a Agentic Mesh using A2AJava library. It also demonstrates how to use the A2A protocol to call tools and tasks from the server.* 
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))
@@ -61,6 +68,9 @@ Live demos have been deployed on hugginface you are welcome to try them out. Or 
 * [A2A MCP RAG Application with Tool calling](https://vishalmysore-a2amcpmongo.hf.space/) - A2A Java Agent with Spring Boot and MongoDB Atlas for semantic search and reasoning. This application demonstrates how to use A2A and MCP protocols to build a RAG application with tool calling capabilities. It uses MongoDB Atlas for vector search and reasoning across agent tasks.
 * [A2A and MCP RBAC Security](https://vishalmysore-a2amcpdemo.hf.space/) - A2A and MCP demo with RBAC security. This application demonstrates how to use A2A and MCP protocols to build a secure application with role-based access control. It uses Spring Security and JWT for authentication and authorization.
 * [A2A and MCP with Selenium](https://vishalmysore-a2amcpselenium.hf.space/) - A2A and MCP demo with Selenium integration. This application demonstrates how to use A2A and MCP protocols to build a web automation application with Selenium. It uses Spring Boot and Selenium for web automation and A2A and MCP protocols for communication.
+* [A2A and MCP with Playwright](https://vishalmysore-a2apw.hf.space/) - A2A and MCP demo with Playwright integration. This application demonstrates how to use A2A and MCP protocols to build a web automation application with Playwright. It uses Spring Boot and Playwright for web automation and A2A and MCP protocols for communication.
+* [A2A and MCP with Spring](https://huggingface.co/spaces/VishalMysore/a2amcpspring) - A2A and MCP demo with Spring integration. This application demonstrates how to use A2A and MCP protocols to build a web application with Spring Boot. It uses Spring Boot and A2A and MCP protocols for communication.
+* [A2A and MCP with Database](https://huggingface.co/spaces/VishalMysore/a2amcpdatabase) - A2A and MCP demo with Database integration. This application demonstrates how to use A2A and MCP protocols to build a database application with Spring Boot and Derby DB. It uses Spring Boot and A2A and MCP protocols for communication.
 
 ## Whats so special about A2AJava library?
 
@@ -87,9 +97,31 @@ you can include this library in your project by following dependency in your `po
 <dependency>
     <groupId>io.github.vishalmysore</groupId>
     <artifactId>a2ajava</artifactId>
-    <version>0.0.6.1</version>
+    <version>0.1.8.2</version>
 </dependency>
 ```
+
+and for annotations you can use the following dependency:
+
+```json
+<dependency>
+    <groupId>io.github.vishalmysore</groupId>
+    <artifactId>tools4ai-annotations</artifactId>
+    <version>0.0.2</version>
+</dependency>
+```
+
+
+optionally for security you can use the following dependency:
+
+```json
+<dependency>
+<groupId>io.github.vishalmysore</groupId>
+<artifactId>tools4ai-security</artifactId>
+<version>0.0.3</version>
+</dependency>
+```
+
 Get the latest version from [here](https://repo1.maven.org/maven2/io/github/vishalmysore/a2ajava) 
 
 ## Articles
@@ -206,6 +238,15 @@ public class SimpleService {
 Thats it , yeah its that simple!!!
 
 Now this agent will be avaiable to both a2a as well as MCP clients. For more advanced features look at the tutorials section
+
+## Client 
+
+If you want to connect a java base client you can use 
+```java
+  A2AAgent a2aagent = new A2AAgent();
+  a2aagent.connect("http://localhost:7860");
+  Object task = a2aagent.remoteMethodCall("vishal is coming home what should i cook");
+```
 
 
 ## Contributing

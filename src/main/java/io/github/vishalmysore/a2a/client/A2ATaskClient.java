@@ -3,6 +3,7 @@ package io.github.vishalmysore.a2a.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vishalmysore.a2a.domain.*;
+import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,6 +21,8 @@ import java.util.UUID;
  * For normal client server application you can use client built in angular or react or any other web framework
  */
 @Log
+@Getter
+
 public class A2ATaskClient {
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/rpc";
     private final String baseUrl;
@@ -44,7 +47,7 @@ public class A2ATaskClient {
         return new JsonRpcRequest("2.0", method, params, UUID.randomUUID().toString());
     }
 
-    public Task sendTask(String prompt) {
+    public SendTaskResponse sendTask(String prompt) {
         try {
             Message message = new Message();
             TextPart textPart = new TextPart();
@@ -53,17 +56,17 @@ public class A2ATaskClient {
 
             TaskSendParams params = new TaskSendParams();
             params.setMessage(message);
-
+            params.setId(String.valueOf(UUID.randomUUID()));
             JsonRpcRequest request = createRequest("tasks/send", params);
-            ResponseEntity<Task> response = restTemplate.postForEntity(
+            ResponseEntity<SendTaskResponse> response = restTemplate.postForEntity(
                     baseUrl,
                     request,
-                    Task.class
+                    SendTaskResponse.class
             );
 
-            Task task = response.getBody();
+            SendTaskResponse task = response.getBody();
             if (task != null) {
-                pendingTasks.add(task);
+                pendingTasks.add(task.getResult());
             }
             return task;
         } catch (HttpClientErrorException e) {
@@ -86,7 +89,7 @@ public class A2ATaskClient {
             );
 
             Task task = response.getBody();
-            if (task != null && task.getStatus().equals("completed")) {
+            if (task != null && task.getStatus().toString().equals("completed")) {
                 pendingTasks.removeIf(t -> t.getId().equals(taskId));
                 completedTasks.add(task);
             }
